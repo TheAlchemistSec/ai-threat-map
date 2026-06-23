@@ -45,8 +45,41 @@ Keep it concise and actionable."""
         ]
     )
     
-    return {"threat_model": message.content[0].text}
+    threat_text = message.content[0].text
+
+    # Calculate risk score
+    high_count = threat_text.count('High')
+    medium_count = threat_text.count('Medium')
+    low_count = threat_text.count('Low')
+
+    total_threats = high_count + medium_count + low_count
+
+    # Risk calculation: High=3 points, Medium=2, Low=1
+    risk_score = (high_count * 3) + (medium_count * 2) + (low_count * 1)
+    max_possible_score = total_threats * 3 if total_threats > 0 else 1
+    risk_percentage = int((risk_score / max_possible_score) * 100)
+
+    # Determine risk level
+    if risk_percentage >= 70:
+        risk_level = "Critical"
+    elif risk_percentage >= 50:
+        risk_level = "High"
+    elif risk_percentage >= 30:
+        risk_level = "Medium"
+    else:
+        risk_level = "Low"
+
+    return {
+        "threat_model": threat_text,
+        "risk_score": risk_percentage,
+        "risk_level": risk_level,
+        "threat_breakdown": {
+            "high": high_count,
+            "medium": medium_count,
+            "low": low_count
+        }
+    }
 
 @app.get("/")
 def root():
-    return {"message": "AI ThreadMap API is running"}
+    return {"message": "AI Threat Map API is running"}

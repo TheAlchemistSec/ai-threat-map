@@ -18,7 +18,7 @@ function App() {
         method: 'POST'
       });
       const data = await response.json();
-      setThreatModel(data.threat_model);
+      setThreatModel(data);
     } catch (error) {
       console.error('Error:', error);
       alert('Error generating threat model');
@@ -28,7 +28,20 @@ function App() {
 
   return (
     <div className="container">
-      <h1>AI ThreadMap</h1>
+      <h1>AI Threat Map</h1>
+       {threatModel && threatModel.risk_level && (
+  <div className={`risk-summary risk-${threatModel.risk_level.toLowerCase()}`}>
+    <div className="risk-score">
+      <h3>Overall Risk Score: {threatModel.risk_score}%</h3>
+      <p className="risk-level">Risk Level: <strong>{threatModel.risk_level}</strong></p>
+    </div>
+    <div className="threat-stats">
+      <span className="stat high">🔴 High: {threatModel.threat_breakdown.high}</span>
+      <span className="stat medium">🟡 Medium: {threatModel.threat_breakdown.medium}</span>
+      <span className="stat low">🟢 Low: {threatModel.threat_breakdown.low}</span>
+    </div>
+  </div>
+)}
       <p>LLM Threat Modeling Tool</p>
       
       <form onSubmit={handleSubmit}>
@@ -61,10 +74,27 @@ function App() {
         </button>
       </form>
 
-      {threatModel && (
-        <div className="results">
+      {threatModel && threatModel.threat_model && (
+        <div className="result">
           <h2>Threat Model Report</h2>
-          <pre>{threatModel}</pre>
+          <div className="threats-container">
+            {threatModel.threat_model.split('\n').map((line, idx) => {
+              if (line.trim() && line.includes('|')) {
+                let severity = 'low';
+                if (line.toUpperCase().includes('HIGH')) {
+                  severity = 'high';
+                } else if (line.toUpperCase().includes('MEDIUM')) {
+                  severity = 'medium';
+                }
+                return (
+                  <div key={idx} className={`threat ${severity}`}>
+                    {line}
+                  </div>
+                );
+              }
+              return null;
+            })}
+          </div>
         </div>
       )}
     </div>

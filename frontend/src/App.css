@@ -84,3 +84,80 @@ button:disabled {
   font-size: 12px;
   line-height: 1.5;
 }
+.threats-container {
+  margin-top: 15px;
+}
+
+.threat {
+  margin: 12px 0;
+  padding: 12px;
+  border-left: 4px solid;
+  background: white;
+  border-radius: 4px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.threat.high {
+  border-left-color: #dc3545;
+  background: #fff5f5;
+}
+
+.threat.medium {
+  border-left-color: #ffc107;
+  background: #fffbf0;
+}
+
+.threat.low {
+  border-left-color: #28a745;
+  background: #f5fff5;
+}
+.risk-summary {
+  margin-bottom: 20px;
+  padding: 20px;
+  border-radius: 8px;
+  border: 2px solid;
+}
+
+.risk-summary.risk-critical {
+  background: #fff5f5;
+  border-color: #dc3545;
+}
+
+.risk-summary.risk-high {
+  background: #fff9e6;
+  border-color: #ff9800;
+}
+
+.risk-summary.risk-medium {
+  background: #e3f2fd;
+  border-color: #2196f3;
+}
+
+.risk-summary.risk-low {
+  background: #f5fff5;
+  border-color: #28a745;
+}
+
+.risk-score h3 {
+  margin: 0 0 5px 0;
+  font-size: 20px;
+}
+
+.risk-level {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.threat-stats {
+  margin-top: 10px;
+  display: flex;
+  gap: 15px;
+  font-size: 14px;
+}
+
+.stat {
+  padding: 5px 10px;
+  background: white;
+  border-radius: 4px;
+}
