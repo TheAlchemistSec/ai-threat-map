@@ -3,6 +3,13 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from anthropic import Anthropic
 from fastapi.middleware.cors import CORSMiddleware
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib.units import inch
+from reportlab.lib import colors
+from io import BytesIO
+from fastapi.responses import StreamingResponse
 
 load_dotenv()
 
@@ -79,6 +86,47 @@ Keep it concise and actionable."""
             "low": low_count
         }
     }
+@app.get("/export-pdf")
+def export_pdf(app_name: str, risk_level: str, risk_score: int, threat_model: str):
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    styles = getSampleStyleSheet()
+    story = []
+
+    # Title
+    title_style = ParagraphStyle(
+        'CustomTitle',
+        parent=styles['Heading1'],
+        fontSize=24,
+        textColor=colors.HexColor('#000000'),
+        spaceAfter=30,
+    )
+    story.append(Paragraph("AI Threat Map Report", title_style))
+    story.append(Spacer(1, 0.2*inch))
+
+    # App Info
+    story.append(Paragraph(f"<b>Application:</b> {app_name}", styles['Normal']))
+    story.append(Paragraph(f"<b>Risk Level:</b> {risk_level}", styles['Normal']))
+    story.append(Paragraph(f"<b>Risk Score:</b> {risk_score}%", styles['Normal']))
+    story.append(Spacer(1, 0.3*inch))
+
+    # Threats
+    story.append(Paragraph("Identified Threats", styles['Heading2']))
+    story.append(Spacer(1, 0.1*inch))
+    
+    for line in threat_model.split('\n'):
+        if line.strip() and '|' in line:
+            story.append(Paragraph(line, styles['Normal']))
+            story.append(Spacer(1, 0.05*inch))
+
+    doc.build(story)
+    buffer.seek(0)
+    
+    return StreamingResponse(
+        iter([buffer.getvalue()]),
+        media_type="application/pdf",
+        headers={"Content-Disposition": f"attachment; filename={app_name}_threat_model.pdf"}
+    )
 
 @app.get("/")
 def root():
