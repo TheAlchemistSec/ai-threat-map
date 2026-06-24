@@ -4,7 +4,7 @@ A tool that helps you find security threats in applications that use LLMs.
 
 ## What's the problem?
 
-When you build an app with an LLM like Claude, there are security risks specific to LLMs — like prompt injection, data leaks, hallucinations. Existing threat modeling tools don't focus on these. So I built this.
+When you build an app with an LLM like Claude, there are security risks specific to LLMs like prompt injection, data leaks, hallucinations. Existing threat modeling tools don't focus on these. So I built this.
 
 ## How does it work?
 
